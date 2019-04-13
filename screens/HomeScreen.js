@@ -14,7 +14,11 @@ import { MonoText } from '../components/StyledText';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
-    title: 'Tasks',
+    title: 'All tasks',
+    headerStyle: {
+      backgroundColor: '#d98880'
+    },
+    headerTintColor: '#FFF'
   };
 
   render() {

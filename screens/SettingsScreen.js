@@ -4,7 +4,11 @@ import { ExpoConfigView } from '@expo/samples';
 
 export default class SettingsScreen extends React.Component {
   static navigationOptions = {
-    title: 'Checked tasks',
+    title: 'Checked',
+    headerStyle: {
+      backgroundColor: '#d98880'
+    },
+    headerTintColor: '#FFF'
   };
 
   render() {

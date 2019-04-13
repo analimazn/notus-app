@@ -3,7 +3,7 @@
   "expoServerPort": null,
   "packagerPort": null,
   "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null
+  "expoServerNgrokUrl": "https://w9-ihu.anonymous.notus-app.exp.direct",
+  "packagerNgrokUrl": "https://packager.w9-ihu.anonymous.notus-app.exp.direct",
+  "ngrokPid": 28157
 }
