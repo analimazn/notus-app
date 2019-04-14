@@ -1,10 +1,25 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View, Text, Image, Button } from 'react-native';
+import {  Platform, 
+          StatusBar, 
+          StyleSheet, 
+          View, 
+          Text, 
+          Image, 
+          Button} from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import Login from './navigation/AppLoginNavigator';
 
 class MainScreen extends React.Component {
+
+    static navigationOptions = {
+      title: 'N O T U S',
+      headerStyle: {
+        backgroundColor: '#FFF'
+      },
+      headerTintColor: '#403e41'
+    };
+
   state = {
     isLoadingComplete: false
   }
@@ -60,13 +75,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     justifyContent: 'center'
+  },
+  header: {
+    alignItems: 'center'
   }
 })
 
 const AppScreen = createStackNavigator({
   App: MainScreen
 }, {
-  headerMode: 'none'
+  headerMode: 'screen'
 });
 
 const AppContainer = createAppContainer(AppScreen);
