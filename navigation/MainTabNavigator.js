@@ -9,6 +9,8 @@ import SettingsScreen from '../screens/SettingsScreen';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
+}, {
+  headerMode: 'none'
 });
 
 HomeStack.navigationOptions = {
@@ -27,6 +29,8 @@ HomeStack.navigationOptions = {
 
 const LinksStack = createStackNavigator({
   Links: LinksScreen,
+}, {
+  headerMode: 'none',
 });
 
 LinksStack.navigationOptions = {
@@ -41,6 +45,8 @@ LinksStack.navigationOptions = {
 
 const SettingsStack = createStackNavigator({
   Settings: SettingsScreen,
+}, {
+  headerMode: 'none',
 });
 
 SettingsStack.navigationOptions = {

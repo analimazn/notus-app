@@ -1,15 +1,39 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
-import AppLoginGoogle from '../navigation/AppLoginGoogle';
-import AppLoginFingerPrint from '../navigation/AppLoginFingerPrint';
+import { createStackNavigator, createAppContainer } from 'react-navigation';
+import AppLoginNavigator from '../navigation/AppLoginNavigator';
 
-export default class Login extends Component {
+export default class LoginScreen extends Component {
 	render() {
 		return (
 			<View>
-				<AppLoginGoogle />
-				<AppLoginFingerPrint />
+				<AppLoginNavigator />
 			</View>
 		)
 	}
-};
+}
+
+const LoginStack = createStackNavigator({
+  Login: LoginScreen
+}, {
+  header: 'none'
+});
+
+LoginStack.navigationOptions = {
+    title: 'Home',
+    headerStyle: {
+      backgroundColor: '#f4511e',
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  };
+
+const LoginContainer = createAppContainer(LoginStack);
+
+export default class Login extends React.Component {
+  render() {
+    return <LoginContainer />;
+  }
+}

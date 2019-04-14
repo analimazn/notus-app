@@ -1,44 +1,54 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import { createStackNavigator, createMaterialTopTabNavigator } from 'react-navigation';
 
-import TabBarIcon from '../components/TabBarIcon';
+import TabBarLogin from '../components/TabBarLogin';
 import LoginGoogle from '../screens/LoginGoogle';
 import LoginFingerPrint from '../screens/LoginFingerPrint';
 
 const LoginGoogleStack = createStackNavigator({
   Google: LoginGoogle,
+}, {
+  headerMode: 'none',
 });
+
 
 LoginGoogleStack.navigationOptions = {
   tabBarLabel: 'Google',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
+    <TabBarLogin
       focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-list${focused ? '' : '-outline'}`
-          : 'md-list'
-      }
+      name={'ios-log-in'}
     />
   ),
 };
 
 const LoginFingerPrintStack = createStackNavigator({
   Finger: LoginFingerPrint,
+}, {
+  headerMode: 'none',
 });
 
 LoginFingerPrintStack.navigationOptions = {
   tabBarLabel: 'Scan',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
+    <TabBarLogin
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
+      name={'md-finger-print'}
     />
   ),
 };
 
-export default createBottomTabNavigator({
-  LoginGoogleStack,
-  LoginFingerPrintStack
+export default createMaterialTopTabNavigator({
+  Google: { screen: LoginGoogleStack},
+  Finger: { screen: LoginFingerPrintStack},
+}, {
+  tabBarOptions: {
+    showIcon: true,
+    showLabel: false,
+    style: {
+      backgroundColor: '#efdbf7',
+    }
+  }
 });
+ 

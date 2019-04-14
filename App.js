@@ -1,13 +1,10 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View, Text, Image, Button } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
+import { createStackNavigator, createAppContainer } from 'react-navigation';
 import Login from './navigation/AppLoginNavigator';
 
-//import LoginGoogle from './screens/LoginGoogle';
-//import LoginFingerPrint from './screens/LoginFingerPrint';
-//import AppNavigator from './navigation/AppNavigator';
-
-export default class App extends React.Component {
+class MainScreen extends React.Component {
   state = {
     isLoadingComplete: false
   }
@@ -65,3 +62,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   }
 })
+
+const AppScreen = createStackNavigator({
+  App: MainScreen
+}, {
+  headerMode: 'none'
+});
+
+const AppContainer = createAppContainer(AppScreen);
+
+export default class App extends React.Component {
+  render() {
+    return <AppContainer />;
+  }
+}

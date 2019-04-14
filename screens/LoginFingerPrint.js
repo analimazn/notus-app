@@ -12,10 +12,11 @@ import { Constants, LocalAuthentication } from 'expo';
 import AppNavigator from '../navigation/AppNavigator';
 
 export default class LoginFingerPrint extends React.Component {
-   state = {
+  state = {
     compatible: false,
     fingerprints: false,
-    result: ''
+    isFingerPrintTrue: '',
+    isLogged: false
   }
   
   componentDidMount() {
@@ -34,11 +35,11 @@ export default class LoginFingerPrint extends React.Component {
   }
   
   scanFingerprint = async () => {
-    let result = await LocalAuthentication.authenticateAsync(
+    let isFingerPrintTrue = await LocalAuthentication.authenticateAsync(
       'Scan your finger.'
     );
     this.setState({
-      result: JSON.stringify(result.success),
+      isFingerPrintTrue: JSON.stringify(isFingerPrintTrue.success),
     });
   };
   
@@ -63,11 +64,12 @@ export default class LoginFingerPrint extends React.Component {
   };
   
   render() {
-    const isLogin = this.state.result;
+    const isFingerPrintTrue = this.state.isFingerPrintTrue;
+    const isLogged = this.state.isLogged;
     let app;
     let text;
 
-    if (isLogin == 'true') {
+    if (isFingerPrintTrue == 'true') {
       return (
         <View style={styles.container}><AppNavigator /></View>
       );
@@ -82,7 +84,6 @@ export default class LoginFingerPrint extends React.Component {
               : this.scanFingerprint
           } />
         </View>
-        {text}
       </View>
     );
   }
@@ -100,9 +101,3 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   }
 });
-
-<View style={styles.container}> 
-      <View style={styles.button}>
-        <Button title="Sign in with Google" onPress={() => props.signIn()} />
-      </View>
-    </View>
