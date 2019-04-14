@@ -7,6 +7,7 @@ import {
     Alert, 
     Platform,
     Button } from 'react-native';
+
 import { Constants, LocalAuthentication } from 'expo';
 import AppNavigator from '../navigation/AppNavigator';
 
@@ -67,24 +68,20 @@ export default class LoginFingerPrint extends React.Component {
     let text;
 
     if (isLogin == 'true') {
-      app = <AppNavigator/>
-    } else {
-      text = <Text> Tchau </Text>
+      return (
+        <View style={styles.container}><AppNavigator /></View>
+      );
     }
 
     return (
-      <View style={styles.container}>
-        <TouchableOpacity
-          onPress={
+      <View style={styles.container}> 
+        <View style={styles.button}>
+          <Button title="Sign in with your finger" onPress = {
             Platform.OS === 'android'
               ? this.showAndroidAlert
               : this.scanFingerprint
-          }
-          style={styles.button}>
-          <Text style={styles.buttonText}>SCAN</Text>
-        </TouchableOpacity>
-
-        {app}
+          } />
+        </View>
         {text}
       </View>
     );
@@ -94,25 +91,18 @@ export default class LoginFingerPrint extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#ecf0f1',
-  },
-  text: {
-    fontSize: 18,
-    textAlign: 'center'
+    backgroundColor: '#fff',
+    justifyContent: 'center'
   },
   button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 150,
-    height: 60,
-    backgroundColor: '#056ecf',
-    borderRadius: 5
-  },
-  buttonText: {
-    fontSize: 30,
-    color: '#fff'   
+    width: 200,
+    height: 150,
+    alignSelf: 'center'
   }
 });
+
+<View style={styles.container}> 
+      <View style={styles.button}>
+        <Button title="Sign in with Google" onPress={() => props.signIn()} />
+      </View>
+    </View>
