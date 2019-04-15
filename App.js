@@ -8,7 +8,7 @@ import {  Platform,
           Button} from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
-import Login from './navigation/AppLoginNavigator';
+import Login from './screens/Login';
 
 class MainScreen extends React.Component {
 

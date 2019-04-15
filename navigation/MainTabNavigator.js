@@ -60,7 +60,8 @@ SettingsStack.navigationOptions = {
 };
 
 export default createBottomTabNavigator({
-  HomeStack,
-  LinksStack,
-  SettingsStack,
+  Active: { screen: HomeStack },
+  New: { screen: LinksStack },
+  Checked: { screen: SettingsStack },
 });
+ 

@@ -1,9 +1,9 @@
 {
-  "devToolsPort": 19002,
+  "devToolsPort": 19004,
   "expoServerPort": 19000,
-  "packagerPort": 19001,
-  "packagerPid": 30754,
+  "packagerPort": 19005,
+  "packagerPid": 18747,
   "expoServerNgrokUrl": "https://w9-ihu.anonymous.notus-app.exp.direct",
   "packagerNgrokUrl": "https://packager.w9-ihu.anonymous.notus-app.exp.direct",
-  "ngrokPid": 30803
+  "ngrokPid": 18796
 }

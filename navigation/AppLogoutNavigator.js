@@ -1,11 +1,12 @@
 import React from 'react';
 import { createAppContainer, createStackNavigator } from 'react-navigation';
 
-import MainLoginNavigator from './MainLoginNavigator';
+import MainLogoutNavigator from './MainLogoutNavigator';
 
 export default createAppContainer(createStackNavigator({
-    Main: { screen: MainLoginNavigator },
+    Main: { screen: MainLogoutNavigator },
   }, {
     headerMode: 'none'
   }
 ));
+
