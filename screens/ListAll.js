@@ -12,11 +12,12 @@ import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 
-export default class HomeScreen extends React.Component {
+export default class ListAll extends React.Component {
   static navigationOptions = {
     title: 'All tasks',
     headerStyle: {
-      backgroundColor: '#d98880'
+      backgroundColor: '#b1b2f0',
+      height: 35
     },
     headerTintColor: '#FFF'
   };

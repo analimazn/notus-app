@@ -1,12 +1,13 @@
 import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { ExpoLinksView } from '@expo/samples';
+import { ExpoConfigView } from '@expo/samples';
 
-export default class LinksScreen extends React.Component {
+export default class ListChecked extends React.Component {
   static navigationOptions = {
-    title: 'New task',
+    title: 'Checked',
     headerStyle: {
-      backgroundColor: '#d98880'
+      backgroundColor: '#b1b2f0',
+      height: 35 
     },
     headerTintColor: '#FFF'
   };
@@ -24,7 +25,6 @@ export default class LinksScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 15,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff'
   },
 });

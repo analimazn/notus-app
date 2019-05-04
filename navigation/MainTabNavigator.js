@@ -3,17 +3,17 @@ import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import ListAll from '../screens/ListAll';
+import NewTask from '../screens/NewTask';
+import ListChecked from '../screens/ListChecked';
 
-const HomeStack = createStackNavigator({
-  Home: HomeScreen,
+const ListAllStack = createStackNavigator({
+  Home: ListAll,
 }, {
-  headerMode: 'none'
+  headerMode: 'screen'
 });
 
-HomeStack.navigationOptions = {
+ListAllStack.navigationOptions = {
   tabBarLabel: 'Active',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
@@ -28,9 +28,9 @@ HomeStack.navigationOptions = {
 };
 
 const LinksStack = createStackNavigator({
-  Links: LinksScreen,
+  Links: NewTask,
 }, {
-  headerMode: 'none',
+  headerMode: 'screen',
 });
 
 LinksStack.navigationOptions = {
@@ -44,9 +44,9 @@ LinksStack.navigationOptions = {
 };
 
 const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen,
+  Settings: ListChecked,
 }, {
-  headerMode: 'none',
+  headerMode: 'screen',
 });
 
 SettingsStack.navigationOptions = {
@@ -60,7 +60,7 @@ SettingsStack.navigationOptions = {
 };
 
 export default createBottomTabNavigator({
-  Active: { screen: HomeStack },
+  Active: { screen: ListAllStack },
   New: { screen: LinksStack },
   Checked: { screen: SettingsStack },
 });

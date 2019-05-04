@@ -76,7 +76,6 @@ class LoginScreen extends Component {
   }
 
   signIn = async (item) => {
-    console.log(item)
     try {
       if(item == 'google') {
         await this.signInWithGoogle();
@@ -141,7 +140,7 @@ const LoginPage = props => {
   return (
     <View style={styles.container}> 
       <View style={styles.button}>
-        <Button title="Sign in with Google" onPress={() => props.signIn('google')} />
+        <Button title="Sign in with Google" onPress = {() => props.signIn('google')} />
         <Button title="Sign in with your finger" onPress = {() => props.signIn('finger')} />
       </View>
     </View>
@@ -165,6 +164,7 @@ const styles = StyleSheet.create({
   button: {
     width: 200,
     height: 150,
-    alignSelf: 'center'
+    alignSelf: 'center',
+    padding: 10
   }
 })
