@@ -1,5 +1,6 @@
 import React from 'react';
-import {  StyleSheet,
+import {  Alert,
+          StyleSheet,
           TextInput,
           AppRegistry,
           View,
@@ -8,12 +9,13 @@ import {  StyleSheet,
           DatePickerAndroid,
           TimePickerAndroid,
           ScrollView,
-          KeyboardAvoidingView } from 'react-native';
+          KeyboardAvoidingView,
+          TouchableHighlight } from 'react-native';
 
 export default class NewTask extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
       title: '',
       description: '',
       date: '',
@@ -53,11 +55,43 @@ export default class NewTask extends React.Component {
 
   _setText = async (text) => {
     try {
-      console.log(text)
-    } catch (e) {
-      console.log("error", e)
+        console.log(this.state)
+
+        let res = await fetch("http://192.168.0.10:5050/api/tasks", {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: this.state.title,
+            description: this.state.description,
+            date: this.state.date,
+            time: this.state.time,
+            importance: this.state.importance,
+            check: this.state.check
+          }),
+        })
+
+        if(res.status !== 200) {
+          Alert.alert('Please, insert valid values')
+        } else {
+          Alert.alert('Your task has been saved')
+        }
+        
+      } catch(err) { 
+        console.log(err)
+      } finally {
+        this.setState({
+          title: '',
+          description: '',
+          date: '',
+          time: '',
+          importance: '',
+          check: false
+        })
+      }
     }
-  }
 
   _setDateAndroid = async() => {
     try {
@@ -100,7 +134,18 @@ export default class NewTask extends React.Component {
     return (
       <KeyboardAvoidingView behavior="padding">
         <ScrollView>
-          <InputText _setText={this._setText} />
+          <View style={styles.container}>
+            <TextInput  style={styles.textInput}
+                        placeholder="Title"
+                        value={this.state.title}
+                        onChangeText={(title) => this.setState({title: title})}>
+            </TextInput>
+            <TextInput  style={styles.textInput}
+                        placeholder="Description"
+                        value={this.state.description}
+                        onChangeText={(description) => this.setState({description: description})}>
+            </TextInput>
+          </View>
           <View style={styles.buttonOption}>
             <Button 
               onPress={this._setDateAndroid}
@@ -108,7 +153,7 @@ export default class NewTask extends React.Component {
               color="#c5c1ca"
             />
           </View>
-          <Text style={styles.textInput}>
+          <Text style={styles.text}>
             {this.state.date}
           </Text>
           <View style={styles.buttonOption}>
@@ -118,17 +163,16 @@ export default class NewTask extends React.Component {
               color="#c5c1ca"
             />
           </View>
-          <Text style={styles.textInput}>
+          <Text style={styles.text}>
             {this.state.time}
           </Text>
-          
           <Text style={styles.text}>
             What is the level of importance? {this.state.importance}
           </Text>
           <ButtonChoiceImportance _setImportance={this._setImportance} />
           <View style={styles.buttonOption}>
             <Button 
-              onPress={this._setTimeAndroid}
+              onPress={this._setText}
               title="Save"
               color="#b1b2f0"
             />
@@ -168,7 +212,7 @@ const InputText = props => {
         Title
       </Text>
       <TextInput style={styles.textInput}>
-        onChangeText = {(text) => props._setText(text)}
+        onChangeText = {(title) => props._setText(title)}
       </TextInput>
       <Text style={styles.text}>
         Description
@@ -192,7 +236,8 @@ const styles = StyleSheet.create({
     borderColor: 'gray', 
     borderWidth: 1,
     alignSelf: 'center',
-    padding: 10
+    padding: 10,
+    margin: 10
   },
   text: {
     height: 40,
