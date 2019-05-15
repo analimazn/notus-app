@@ -1,18 +1,24 @@
-import React from 'react';
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { WebBrowser } from 'expo';
 
-import { MonoText } from '../components/StyledText';
+import React from "react";
+import {  FlatList, 
+          StyleSheet, 
+          Text, 
+          View,
+          Button,
+          Modal,
+          TouchableWithoutFeedback } from 'react-native';
+
 
 export default class ListAll extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      tasks: [],
+      text: "",
+      modalVisible: false
+    }
+  }
+
   static navigationOptions = {
     title: 'All tasks',
     headerStyle: {
@@ -22,133 +28,102 @@ export default class ListAll extends React.Component {
     headerTintColor: '#FFF'
   };
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 
-          <View style={styles.getStartedContainer}>
-            {this._maybeRenderDevelopmentModeWarning()}
-          </View>
-
-        </ScrollView>
-      </View>
-    );
+  setModalVisible(visible) {
+    this.setState({modalVisible: visible});
   }
 
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
+  async componentDidMount() {
+    try {
+      const res = await fetch("http://192.168.0.10:5050/api/tasks", {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      })
+      const tasks = await JSON.parse(res._bodyInit);
+      this.setState({tasks});
 
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
+    } catch(err) { 
+      console.log("err", err)
     }
   }
 
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
-  };
+  render() {
+    return (
+      <View style={styles.container}>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+          }}>
+          <View style={{marginTop: 22}}>
+            <View>
+              <Text>Hello World!</Text>
 
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  this.setModalVisible(!this.state.modalVisible);
+                }}>
+                <Text>Hide Modal</Text>
+              </TouchableWithoutFeedback>
+            </View>
+          </View>
+        </Modal>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            this.setModalVisible(true);
+          }}>
+          <FlatList
+            data={this.state.tasks}
+            showsVerticalScrollIndicator={true}
+            keyExtractor={item => item._id}
+            renderItem={({item}) =>
+              <View style={styles.boxTask}>
+                <Text style={styles.item}>{item.title}</Text>
+                <Text style={styles.item}>{item.time}</Text>
+                <Text style={styles.item}>{item.date}</Text>
+              </View>
+            }
+          />
+        </TouchableWithoutFeedback>
+      </View>
     );
-  };
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
+   flex: 1,
+   paddingTop: 22
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
+  item: {
+    padding: 10,
+    fontSize: 18,
+    height: 44,
   },
-  contentContainer: {
+  flatview: {
+    justifyContent: 'center',
     paddingTop: 30,
+    borderRadius: 2,
   },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
+  textInput: {
+    width: 400, 
+    borderColor: 'gray', 
+    borderWidth: 1,
+    alignSelf: 'center',
+    padding: 10,
+    margin: 10
   },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-  },
-});
+  boxTask: {
+    width: 300, 
+    borderColor: 'gray', 
+    borderWidth: 1,
+    alignSelf: 'center',
+    padding: 10,
+    margin: 10
+  }
+})

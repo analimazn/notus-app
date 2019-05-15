@@ -27,13 +27,13 @@ ListAllStack.navigationOptions = {
   ),
 };
 
-const LinksStack = createStackNavigator({
+const NewTaskStack = createStackNavigator({
   Links: NewTask,
 }, {
   headerMode: 'screen',
 });
 
-LinksStack.navigationOptions = {
+NewTaskStack.navigationOptions = {
   tabBarLabel: 'New',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
@@ -43,13 +43,13 @@ LinksStack.navigationOptions = {
   ),
 };
 
-const SettingsStack = createStackNavigator({
+const ListCheckedStack = createStackNavigator({
   Settings: ListChecked,
 }, {
   headerMode: 'screen',
 });
 
-SettingsStack.navigationOptions = {
+ListCheckedStack.navigationOptions = {
   tabBarLabel: 'Checked',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
@@ -61,7 +61,7 @@ SettingsStack.navigationOptions = {
 
 export default createBottomTabNavigator({
   Active: { screen: ListAllStack },
-  New: { screen: LinksStack },
-  Checked: { screen: SettingsStack },
+  New: { screen: NewTaskStack },
+  Checked: { screen: ListCheckedStack },
 });
  

@@ -12,7 +12,7 @@ import {  Alert,
           KeyboardAvoidingView,
           TouchableHighlight } from 'react-native';
 
-export default class NewTask extends React.Component {
+export default class UpdateTask extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -57,7 +57,7 @@ export default class NewTask extends React.Component {
     try {
         console.log(this.state)
 
-        let res = await fetch("http://192.168.0.10:5050/api/tasks", {
+        let res = await fetch("http://172.16.4.145:5050/api/tasks", {
           method: 'POST',
           headers: {
             Accept: 'application/json',
