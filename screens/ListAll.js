@@ -1,21 +1,31 @@
 
 import React from "react";
-import {  FlatList, 
+import deleteBlueButton from "../assets/images/trash-blue1.png";
+import checkButton from "../assets/images/check.png";
+import maximizeButton from "../assets/images/maximize.png";
+import checkGradientButton from "../assets/images/check-gradient1.png";
+import nextButton from "../assets/images/next.png";
+import backButton from "../assets/images/back.png";
+
+import {  Alert,
+          FlatList, 
           StyleSheet, 
           Text, 
           View,
+          Image,
           Button,
           Modal,
-          TouchableWithoutFeedback } from 'react-native';
-
+          TouchableOpacity,
+          RefreshControl } from "react-native";
 
 export default class ListAll extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       tasks: [],
-      text: "",
-      modalVisible: false
+      taskAllInfo: {},
+      modalVisible: false,
+      refreshing: false,
     }
   }
 
@@ -28,9 +38,53 @@ export default class ListAll extends React.Component {
     headerTintColor: '#FFF'
   };
 
-
-  setModalVisible(visible) {
+  async _setModalVisible(visible, id) {
     this.setState({modalVisible: visible});
+    if (id == 0) {
+      this.setState({taskAllInfo: {}})
+    } else {
+      let task = this.state.tasks.filter(obj => obj._id == id);
+      let objTask = task[0];      
+      await this.setState({taskAllInfo: objTask});
+    }
+    
+    return (
+      <View style={styles.container}>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+          }}>
+          <View>
+            <View>
+              <TouchableOpacity
+                onPress={() => {
+                  this._setModalVisible(!this.state.modalVisible);
+                }}>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </View>
+    )
+  }
+
+  async _checkTask() {
+    console.log('check');
+    return false;
+  }
+
+  async _deleteTask() {
+    console.log('delete');
+    return false;
+  }
+
+  _onRefresh = async () => {
+    this.setState({refreshing: true});
+    await this.componentDidMount();
+    this.setState({refreshing: false});
   }
 
   async componentDidMount() {
@@ -42,7 +96,12 @@ export default class ListAll extends React.Component {
           'Content-Type': 'application/json',
         },
       })
-      const tasks = await JSON.parse(res._bodyInit);
+      let tasks = await JSON.parse(res._bodyInit);
+      tasks.forEach(item => {
+        item.title = item.title.toUpperCase();
+        item.description = item.description.toLowerCase();
+      })
+      console.log(tasks)
       this.setState({tasks});
 
     } catch(err) { 
@@ -55,41 +114,78 @@ export default class ListAll extends React.Component {
       <View style={styles.container}>
         <Modal
           animationType="slide"
+          presentationStyle="pageSheet"
+          position="bottom"
           transparent={false}
           visible={this.state.modalVisible}
           onRequestClose={() => {
             Alert.alert('Modal has been closed.');
           }}>
-          <View style={{marginTop: 22}}>
-            <View>
-              <Text>Hello World!</Text>
-
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  this.setModalVisible(!this.state.modalVisible);
-                }}>
-                <Text>Hide Modal</Text>
-              </TouchableWithoutFeedback>
+          <View style={styles.containerTask}>
+            <View style={styles.modalContainer}>
+              <View style={styles.containerInfoTask}>
+                <View style={styles.text}>
+                  <Text style={styles.textTitle}>{this.state.taskAllInfo.title}</Text>
+                  <Text style={styles.textTitle}>Description:</Text> 
+                  <Text style={styles.text}>{this.state.taskAllInfo.description}</Text>
+                  <Text style={styles.textTitle}>Time:</Text>
+                  <Text style={styles.text}>{this.state.taskAllInfo.time}</Text>
+                  <Text style={styles.textTitle}>Date:</Text>
+                  <Text style={styles.text}>{this.state.taskAllInfo.date}</Text>
+                </View>
+              </View>
             </View>
+            <TouchableOpacity
+              onPress={() => {
+                this._setModalVisible(!this.state.modalVisible, 0);
+              }}>
+              <Image
+                style={styles.button}
+                source={backButton}
+              />
+            </TouchableOpacity>
           </View>
         </Modal>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            this.setModalVisible(true);
-          }}>
-          <FlatList
-            data={this.state.tasks}
-            showsVerticalScrollIndicator={true}
-            keyExtractor={item => item._id}
-            renderItem={({item}) =>
-              <View style={styles.boxTask}>
-                <Text style={styles.item}>{item.title}</Text>
-                <Text style={styles.item}>{item.time}</Text>
-                <Text style={styles.item}>{item.date}</Text>
-              </View>
-            }
-          />
-        </TouchableWithoutFeedback>
+        <FlatList
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh}
+            />
+          }
+          data={this.state.tasks}
+          showsVerticalScrollIndicator={true}
+          keyExtractor={item => item._id}
+          renderItem={ ({ item }) =>
+            <View style={styles.container}>
+              <TouchableOpacity
+                onPress={() => {
+                  this._setModalVisible(true, item._id);
+                }}>
+                <View style={styles.containerTitle}>
+                  <TouchableOpacity onPress={this._checkTask}>
+                    <Image
+                      style={styles.button}
+                      source={checkButton}
+                    />
+                  </TouchableOpacity>
+                  
+                  <View style={styles.containerText}>
+                    <Text style={styles.text}>{item.title}</Text>
+                  </View>
+                  
+                  <TouchableOpacity onPress={this._deleteTask}>
+                    <Image
+                      style={styles.button}
+                      source={deleteBlueButton}
+                    />
+                  </TouchableOpacity>
+
+                </View>
+              </TouchableOpacity>
+            </View>
+          }
+        />
       </View>
     );
   }
@@ -98,32 +194,54 @@ export default class ListAll extends React.Component {
 const styles = StyleSheet.create({
   container: {
    flex: 1,
-   paddingTop: 22
+   paddingTop: 10
   },
-  item: {
+  containerTitle: {
+    flexDirection: 'row',
     padding: 10,
+    alignSelf: 'auto',
+    justifyContent: 'space-around',
+    borderWidth: 1,
+    borderColor: '#edf4f4'
+  },
+  containerText: {
+    flexDirection: 'row',
+    alignSelf: 'flex-start',
+    width: 300
+  },
+  text: {
     fontSize: 18,
-    height: 44,
+    color: 'gray',
+    padding: 10,
+    textAlign: 'justify'
   },
-  flatview: {
-    justifyContent: 'center',
-    paddingTop: 30,
-    borderRadius: 2,
+  textTitle: {
+    fontSize: 18,
+    color: 'gray',
+    padding: 10,
+    textAlign: 'justify',
+    fontWeight: 'bold'
   },
-  textInput: {
+  modalContainer: {
     width: 400, 
-    borderColor: 'gray', 
-    borderWidth: 1,
     alignSelf: 'center',
     padding: 10,
     margin: 10
   },
-  boxTask: {
-    width: 300, 
-    borderColor: 'gray', 
+  containerTask: {
+    flex: 1,
+    paddingTop: 22,
+    alignItems: 'center',
+  },
+  containerInfoTask: {
+    alignSelf: 'auto',
     borderWidth: 1,
-    alignSelf: 'center',
-    padding: 10,
-    margin: 10
+    borderColor: '#edf4f4'
+  },
+  button: {
+    width: 25,
+    height: 25,
+    margin: 10,
+    justifyContent: 'flex-end'
   }
 })
