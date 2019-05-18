@@ -2,9 +2,6 @@
 import React from "react";
 import deleteBlueButton from "../assets/images/trash-blue1.png";
 import checkButton from "../assets/images/check.png";
-import maximizeButton from "../assets/images/maximize.png";
-import checkGradientButton from "../assets/images/check-gradient1.png";
-import nextButton from "../assets/images/next.png";
 import backButton from "../assets/images/back.png";
 
 import {  Alert,
@@ -71,14 +68,39 @@ export default class ListAll extends React.Component {
     )
   }
 
-  async _checkTask() {
-    console.log('check');
-    return false;
+  async _checkTask(item) {
+    try {
+      let res = await fetch("http://192.168.0.10:5050/api/tasks/" + item._id, {
+        method: 'POST',
+        body: JSON.stringify({
+          check: true
+        })
+      })
+      if(res.status !== 200) {
+        throw res.status;
+      } else {
+        Alert.alert('Your task has been checked')
+      }
+    } catch(err) {
+      console.log("err", err);
+      Alert.alert('A problem ocurred, please, try again later.')
+    }
   }
 
-  async _deleteTask() {
-    console.log('delete');
-    return false;
+  async _deleteTask(id) {
+    try {
+      let res = await fetch("http://192.168.0.10:5050/api/tasks/" + id, {
+        method: 'DELETE'
+      });
+      if(res.status !== 200) {
+        throw res.status;
+      } else {
+        Alert.alert('Your task has been deleted')
+      }
+    } catch(err) {
+      console.log("err", err);
+      Alert.alert('A problem ocurred, please, try again later.')
+    }
   }
 
   _onRefresh = async () => {
@@ -98,12 +120,28 @@ export default class ListAll extends React.Component {
       })
       let tasks = await JSON.parse(res._bodyInit);
       tasks.forEach(item => {
+        let date = new Date(item.date).toUTCString();
+        date = date.replace("GMT","");
+        var importance = "";
+        if (item.importance == 3) {
+          importance = "Low";
+        } else if (item.importance == 2) {
+          importance = "Medium";
+        } else if (item.importance == 1) {
+          importance = "High";
+        }
+        let description = item.description.toLowerCase();
+        let uppercaseFirstLetter = description.charAt(0).toUpperCase();
+        let stringWithoutFirstLetter = description.slice(1)
+        let upDescription =  uppercaseFirstLetter + stringWithoutFirstLetter;
+        
+        item.importance = importance;
+        item.date = date;
         item.title = item.title.toUpperCase();
-        item.description = item.description.toLowerCase();
-      })
-      console.log(tasks)
-      this.setState({tasks});
-
+        item.description = upDescription;
+      });
+      let validTasks = await tasks.filter(item => item.check == false);
+      this.setState({tasks: validTasks});
     } catch(err) { 
       console.log("err", err)
     }
@@ -119,7 +157,7 @@ export default class ListAll extends React.Component {
           transparent={false}
           visible={this.state.modalVisible}
           onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
+            this._setModalVisible(!this.state.modalVisible, 0);
           }}>
           <View style={styles.containerTask}>
             <View style={styles.modalContainer}>
@@ -128,10 +166,10 @@ export default class ListAll extends React.Component {
                   <Text style={styles.textTitle}>{this.state.taskAllInfo.title}</Text>
                   <Text style={styles.textTitle}>Description:</Text> 
                   <Text style={styles.text}>{this.state.taskAllInfo.description}</Text>
-                  <Text style={styles.textTitle}>Time:</Text>
-                  <Text style={styles.text}>{this.state.taskAllInfo.time}</Text>
-                  <Text style={styles.textTitle}>Date:</Text>
+                  <Text style={styles.textTitle}>When:</Text>
                   <Text style={styles.text}>{this.state.taskAllInfo.date}</Text>
+                  <Text style={styles.textTitle}>Importance:</Text> 
+                  <Text style={styles.text}>{this.state.taskAllInfo.importance}</Text>
                 </View>
               </View>
             </View>
@@ -163,7 +201,10 @@ export default class ListAll extends React.Component {
                   this._setModalVisible(true, item._id);
                 }}>
                 <View style={styles.containerTitle}>
-                  <TouchableOpacity onPress={this._checkTask}>
+                  <TouchableOpacity  
+                    onPress={() => {
+                      this._checkTask(item);
+                    }}>
                     <Image
                       style={styles.button}
                       source={checkButton}
@@ -174,7 +215,10 @@ export default class ListAll extends React.Component {
                     <Text style={styles.text}>{item.title}</Text>
                   </View>
                   
-                  <TouchableOpacity onPress={this._deleteTask}>
+                  <TouchableOpacity 
+                    onPress={() => {
+                      this._deleteTask(item._id);
+                    }}>
                     <Image
                       style={styles.button}
                       source={deleteBlueButton}
@@ -210,13 +254,13 @@ const styles = StyleSheet.create({
     width: 300
   },
   text: {
-    fontSize: 18,
+    fontSize: 14,
     color: 'gray',
     padding: 10,
     textAlign: 'justify'
   },
   textTitle: {
-    fontSize: 18,
+    fontSize: 16,
     color: 'gray',
     padding: 10,
     textAlign: 'justify',
@@ -239,8 +283,8 @@ const styles = StyleSheet.create({
     borderColor: '#edf4f4'
   },
   button: {
-    width: 25,
-    height: 25,
+    width: 20,
+    height: 20,
     margin: 10,
     justifyContent: 'flex-end'
   }
