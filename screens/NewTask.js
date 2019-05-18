@@ -72,7 +72,6 @@ export default class NewTask extends React.Component {
             check: this.state.check
           }),
         })
-
         if(res.status !== 200) {
           Alert.alert('Please, insert valid values')
         } else {
@@ -98,7 +97,6 @@ export default class NewTask extends React.Component {
       let date = await DatePickerAndroid.open({
         date: new Date()
       })
-
       if (date.action !== DatePickerAndroid.dismissedAction) {
         const finalDate = await `${date.day}` + "/" + 
           `${date.month + 1}` + "/" + `${date.year}`;
@@ -106,7 +104,6 @@ export default class NewTask extends React.Component {
           date: finalDate
         });
       }
-
     } catch ({ code, message }) {
       console.warn('Cannot open date picker', message);
     }

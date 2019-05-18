@@ -1,3 +1,6 @@
+import googleIcon from "../assets/images/google.png";
+import fingerPrint from "../assets/images/fingerprint.png";
+
 import React, { Component } from 'react';
 import {  StyleSheet, 
           Text, 
@@ -8,8 +11,9 @@ import {  StyleSheet,
           Alert,
           Platform } from "react-native"
 
-import { Google } from 'expo';
-import { Constants, LocalAuthentication } from 'expo';
+import {  Google, 
+          Constants, 
+          LocalAuthentication } from 'expo';
 import TabBarIcon from '../components/TabBarIcon';
 
 import AppNavigator from '../navigation/AppNavigator';
@@ -138,12 +142,29 @@ class LoginScreen extends Component {
 
 const LoginPage = props => {
   return (
-    <View style={styles.container}> 
-      <View style={styles.button}>
-        <Button title="Sign in with Google" onPress = {() => props.signIn('google')} />
+    <View style={styles.container}>
+      <View style={styles.containerText}>
+        <Text style={styles.text}>Choose your Google account or Fingerprint to Login</Text>
       </View>
-      <View style={styles.button}>
-        <Button title="Sign in with your finger" onPress = {() => props.signIn('finger')} />
+      <View style={styles.containerButtons}>
+        <TouchableOpacity
+          onPress = {() => {
+            props.signIn('google');
+          }}>
+          <Image
+            style={styles.button}
+            source={googleIcon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress = {() => {
+            props.signIn('finger');
+          }}>
+          <Image
+            style={styles.button}
+            source={fingerPrint}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   )
@@ -163,10 +184,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center'
   },
+  containerButtons: {
+    flexDirection: 'row',
+    padding: 10,
+    alignSelf: 'auto',
+    justifyContent: 'space-around',
+  },
   button: {
-    width: 200,
-    height: 150,
+    width: 75,
+    height: 75,
     alignSelf: 'center',
     padding: 10
-  }
+  },
+  containerText: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    width: 300,
+    marginBottom: 200
+  },
+  text: {
+    fontSize: 20,
+    color: 'gray',
+    padding: 10,
+    textAlign: 'center'
+  },
 })
