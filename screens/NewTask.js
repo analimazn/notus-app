@@ -1,4 +1,7 @@
 import React from 'react';
+import logoutIcon from "../assets/images/logout/exit-gradient-purple1.png";
+import Logout from './Logout';
+
 import {  Alert,
           StyleSheet,
           TextInput,
@@ -6,6 +9,8 @@ import {  Alert,
           View,
           Text,
           Button,
+          Image,
+          TouchableOpacity,
           DatePickerAndroid,
           TimePickerAndroid,
           ScrollView,
@@ -30,7 +35,32 @@ export default class NewTask extends React.Component {
       backgroundColor: '#b1b2f0',
       height: 35 
     },
-    headerTintColor: '#FFF'
+    headerTintColor: '#FFF',
+    headerRight: (
+      <TouchableOpacity onPress={()=>
+        Alert.alert(
+          'Log out',
+          'Do you want to logout?',
+          [
+            {text: 'Cancel', onPress: () => {return null}},
+            {text: 'Confirm', onPress: () => {
+              NewTask._logout;
+            }},
+          ],
+          { cancelable: false }
+        )  
+        }>
+        <Image
+          style={{
+            width: 30,
+            height: 30,
+            margin: 10,
+            padding: 10
+          }}
+          source={logoutIcon}
+        />
+      </TouchableOpacity>
+    )
   };
 
   _setImportance = async (type) => {
@@ -124,6 +154,12 @@ export default class NewTask extends React.Component {
     } catch ({ code, message }) {
       console.warn('Cannot open time picker', message);
     }
+  }
+
+  _logout = () => {
+    return (
+      <Logout/>
+    )
   }
 
   render() {

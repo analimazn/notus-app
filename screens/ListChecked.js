@@ -1,8 +1,10 @@
 
 import React from "react";
-import deleteBlueButton from "../assets/images/trash-blue1.png";
-import uncheckedButton from "../assets/images/unchecked-gradient-purple.png";
-import backButton from "../assets/images/back.png";
+import deleteBlueButton from "../assets/images/delete/trash-blue1.png";
+import uncheckedButton from "../assets/images/uncheck/unchecked-gradient-purple.png";
+import backButton from "../assets/images/back/back.png";
+import logoutIcon from "../assets/images/logout/exit-gradient-purple1.png";
+import Logout from './Logout';
 
 import {  Alert,
           FlatList, 
@@ -10,7 +12,6 @@ import {  Alert,
           Text, 
           View,
           Image,
-          Button,
           Modal,
           TouchableOpacity,
           RefreshControl } from "react-native";
@@ -27,12 +28,37 @@ export default class ListChecked extends React.Component {
   }
 
   static navigationOptions = {
-    title: 'All tasks',
+    title: 'Checked tasks',
     headerStyle: {
       backgroundColor: '#b1b2f0',
       height: 35
     },
-    headerTintColor: '#FFF'
+    headerTintColor: '#FFF',
+    headerRight: (
+      <TouchableOpacity onPress={()=>
+        Alert.alert(
+          'Log out',
+          'Do you want to logout?',
+          [
+            {text: 'Cancel', onPress: () => {return null}},
+            {text: 'Confirm', onPress: () => {
+              ListChecked._logout;
+            }},
+          ],
+          { cancelable: false }
+        )  
+        }>
+        <Image
+          style={{
+            width: 30,
+            height: 30,
+            margin: 10,
+            padding: 10
+          }}
+          source={logoutIcon}
+        />
+      </TouchableOpacity>
+    )
   };
 
   async _setModalVisible(visible, id) {
@@ -109,6 +135,12 @@ export default class ListChecked extends React.Component {
     this.setState({refreshing: false});
   }
 
+  _logout = () => {
+    return (
+      <Logout/>
+    )
+  }
+  
   async componentDidMount() {
     try {
       const res = await fetch("http://192.168.0.10:5050/api/tasks", {

@@ -1,25 +1,25 @@
-import googleIcon from "../assets/images/google.png";
-import fingerPrint from "../assets/images/fingerprint.png";
+import googleIcon from "../assets/images/icons-login/google.png";
+import fingerPrint from "../assets/images/icons-login/fingerprint.png";
 
 import React, { Component } from 'react';
 import {  StyleSheet, 
           Text, 
           View, 
           Image, 
-          Button,
           TouchableOpacity,
           Alert,
           Platform } from "react-native"
-
 import {  Google, 
           Constants, 
           LocalAuthentication } from 'expo';
-import TabBarIcon from '../components/TabBarIcon';
+import {  createStackNavigator, 
+          createAppContainer } from 'react-navigation';
 
+import TabBarIcon from '../components/TabBarIcon';
 import AppNavigator from '../navigation/AppNavigator';
 import Config from '../settings.json';
 
-class LoginScreen extends Component {
+class MainLoginScreen extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -107,24 +107,9 @@ class LoginScreen extends Component {
     this.setState({fingerprints})
   }
   
-  showAndroidAlert = () => {
-    Alert.alert(
-      'Fingerprint Scan',
-      'Place your finger over the touch sensor and press scan.',
-      [
-        {
-          text: 'Scan',
-          onPress: () => {
-            this.scanFingerPrint();
-          },
-        },
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel'),
-          style: 'cancel',
-        },
-      ]
-    );
+  showAndroidAlert = async () => {
+    Alert.alert('Please, print your finger to login');
+    await this.scanFingerPrint();
   };
 
   render() {
@@ -170,14 +155,6 @@ const LoginPage = props => {
   )
 }
 
-export default class Login extends React.Component {
-  render() {
-    return (
-      <LoginScreen />
-    )
-  }
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -209,3 +186,19 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
 })
+
+const LoginScreen = createStackNavigator({
+  Login: MainLoginScreen
+}, {
+  headerMode: 'none'
+});
+
+const LoginContainer = createAppContainer(LoginScreen);
+
+export default class Login extends React.Component {
+  render() {
+    return (
+      <LoginContainer />
+    )
+  }
+}

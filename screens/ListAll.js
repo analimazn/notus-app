@@ -1,8 +1,12 @@
 
 import React from "react";
-import deleteBlueButton from "../assets/images/trash-blue1.png";
-import checkButton from "../assets/images/check.png";
-import backButton from "../assets/images/back.png";
+import deleteBlueButton from "../assets/images/delete/trash-blue1.png";
+import checkButton from "../assets/images/check/check.png";
+import backButton from "../assets/images/back/back.png";
+import notificationIcon from "../assets/images/notification/notification-gradient-purple.png";
+import logoutIcon from "../assets/images/logout/003-logout.png";
+import Logout from './Logout';
+import moment from 'moment';
 
 import {  Alert,
           FlatList, 
@@ -10,7 +14,6 @@ import {  Alert,
           Text, 
           View,
           Image,
-          Button,
           Modal,
           TouchableOpacity,
           RefreshControl } from "react-native";
@@ -32,8 +35,71 @@ export default class ListAll extends React.Component {
       backgroundColor: '#b1b2f0',
       height: 35
     },
-    headerTintColor: '#FFF'
+    headerTintColor: '#FFF',
+    headerRight: (
+      <TouchableOpacity onPress={()=>
+        Alert.alert(
+          'Log out',
+          'Do you want to logout?',
+          [
+            {text: 'Cancel', onPress: () => {return null}},
+            {text: 'Confirm', onPress: () => {
+              ListAll._logout;
+            }},
+          ],
+          { cancelable: false }
+        )  
+        }>
+        <Image
+          style={{
+            width: 30,
+            height: 30,
+            margin: 10,
+            padding: 10
+          }}
+          source={logoutIcon}
+        />
+      </TouchableOpacity>
+    )
   };
+
+  async componentDidMount() {
+    try {
+      const res = await fetch("http://192.168.0.10:5050/api/tasks", {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      })
+      let tasks = await JSON.parse(res._bodyInit);
+      tasks.forEach(item => {
+        let date = new Date(item.date).toUTCString();
+        date = date.replace("GMT","");
+        var importance = "";
+        if (item.importance == 3) {
+          importance = "Low";
+        } else if (item.importance == 2) {
+          importance = "Medium";
+        } else if (item.importance == 1) {
+          importance = "High";
+        }
+        let description = item.description.toLowerCase();
+        let uppercaseFirstLetter = description.charAt(0).toUpperCase();
+        let stringWithoutFirstLetter = description.slice(1)
+        let upDescription =  uppercaseFirstLetter + stringWithoutFirstLetter;
+        
+        item.importance = importance;
+        item.date = date;
+        item.title = item.title.toUpperCase();
+        item.description = upDescription;
+      });
+      let validTasks = await tasks.filter(item => item.check == false);
+      this.setState({tasks: validTasks});
+    } catch(err) { 
+      console.log("err", err)
+    }
+  }
 
   async _setModalVisible(visible, id) {
     this.setState({modalVisible: visible});
@@ -109,47 +175,36 @@ export default class ListAll extends React.Component {
     this.setState({refreshing: false});
   }
 
-  async componentDidMount() {
-    try {
-      const res = await fetch("http://192.168.0.10:5050/api/tasks", {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      })
-      let tasks = await JSON.parse(res._bodyInit);
-      tasks.forEach(item => {
-        let date = new Date(item.date).toUTCString();
-        date = date.replace("GMT","");
-        var importance = "";
-        if (item.importance == 3) {
-          importance = "Low";
-        } else if (item.importance == 2) {
-          importance = "Medium";
-        } else if (item.importance == 1) {
-          importance = "High";
-        }
-        let description = item.description.toLowerCase();
-        let uppercaseFirstLetter = description.charAt(0).toUpperCase();
-        let stringWithoutFirstLetter = description.slice(1)
-        let upDescription =  uppercaseFirstLetter + stringWithoutFirstLetter;
-        
-        item.importance = importance;
-        item.date = date;
-        item.title = item.title.toUpperCase();
-        item.description = upDescription;
-      });
-      let validTasks = await tasks.filter(item => item.check == false);
-      this.setState({tasks: validTasks});
-    } catch(err) { 
-      console.log("err", err)
-    }
+  _logout = () => {
+    return (
+      <Logout/>
+    )
+  }
+
+  async _tasksOfDay() {
+    this.state.tasks.forEach(task => {
+      let currentDate = new Date().getDate();
+      let date = new Date(task.date);
+      if (currentDate == date) {
+        console.log(task)
+      }
+    })
   }
 
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.containerHeader}>
+          <TouchableOpacity  
+            onPress={() => {
+              this._tasksOfDay();
+            }}>
+            <Image
+              style={styles.buttonHeader}
+              source={notificationIcon}
+            />
+          </TouchableOpacity>
+        </View>
         <Modal
           animationType="slide"
           presentationStyle="pageSheet"
@@ -248,6 +303,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#edf4f4'
   },
+  containerHeader: {
+    flexDirection: 'row',
+    padding: 10,
+    alignSelf: 'auto',
+    justifyContent: 'space-around'
+  },
   containerText: {
     flexDirection: 'row',
     alignSelf: 'flex-start',
@@ -285,6 +346,12 @@ const styles = StyleSheet.create({
   button: {
     width: 20,
     height: 20,
+    margin: 10,
+    justifyContent: 'flex-end'
+  },
+  buttonHeader: {
+    width: 30,
+    height: 30,
     margin: 10,
     justifyContent: 'flex-end'
   }

@@ -14,14 +14,14 @@
     "@expo/samples": "2.1.1",
     "@expo/vector-icons": "^10.0.1",
     "dotenv": "^7.0.0",
-    "expo": "^32.0.0",
+    "expo": "^32.0.6",
     "expo-google-sign-in": "^4.0.0",
     "googleapis": "^39.2.0",
     "moment": "^2.24.0",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
-    "react-navigation": "^3.9.1",
-    "save": "^2.3.3"
+    "react-navigation": "^3.11.0",
+    "save": "^2.4.0"
   },
   "devDependencies": {
     "babel-preset-expo": "^5.1.1",
