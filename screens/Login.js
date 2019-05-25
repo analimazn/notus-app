@@ -1,7 +1,7 @@
-import googleIcon from "../assets/images/icons-login/google.png";
-import fingerPrint from "../assets/images/icons-login/fingerprint.png";
+import googleIcon from "../assets/images/icons-login/google.png"
+import fingerPrint from "../assets/images/icons-login/fingerprint.png"
 
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {  StyleSheet, 
           Text, 
           View, 
@@ -11,13 +11,13 @@ import {  StyleSheet,
           Platform } from "react-native"
 import {  Google, 
           Constants, 
-          LocalAuthentication } from 'expo';
+          LocalAuthentication } from 'expo'
 import {  createStackNavigator, 
-          createAppContainer } from 'react-navigation';
+          createAppContainer } from 'react-navigation'
 
-import TabBarIcon from '../components/TabBarIcon';
-import AppNavigator from '../navigation/AppNavigator';
-import Config from '../settings.json';
+import TabBarIcon from '../components/TabBarIcon'
+import AppNavigator from '../navigation/AppNavigator'
+import Config from '../settings.json'
 
 class MainLoginScreen extends Component {
   constructor(props) {
@@ -38,7 +38,8 @@ class MainLoginScreen extends Component {
   //Google
   signInWithGoogle = async () => {
     try {
-      const clientId = Config.credential_key;
+      const clientId = Config.credential_key
+  
       const { type, accessToken, user } = await Google.logInAsync({
         behavior: "web",
         scopes: [
@@ -57,13 +58,13 @@ class MainLoginScreen extends Component {
       } else {
         console.log("cancelled")
       }
-
-    let isFingerPrintTrue = await LocalAuthentication.authenticateAsync(
-      'Scan your finger.'
-    );
-    this.setState({
-      signedIn: JSON.stringify(isFingerPrintTrue.success),
-    });
+      
+      let isFingerPrintTrue = await LocalAuthentication.authenticateAsync(
+        'Scan your finger.'
+      )
+      this.setState({
+        signedIn: JSON.stringify(isFingerPrintTrue.success),
+      })
 
     } catch (e) {
       console.log("error", e)
@@ -73,18 +74,18 @@ class MainLoginScreen extends Component {
   scanFingerPrint = async () => {
     let isFingerPrintTrue = await LocalAuthentication.authenticateAsync(
       'Scan your finger.'
-    );
+    )
     this.setState({
       signedIn: JSON.stringify(isFingerPrintTrue.success),
-    });
+    })
   }
 
   signIn = async (item) => {
     try {
       if(item == 'google') {
-        await this.signInWithGoogle();
+        await this.signInWithGoogle()
       } else if (item == 'finger') {
-        await this.showAndroidAlert();
+        await this.showAndroidAlert()
       }
     } catch (e) {
       console.log("error", e)
@@ -93,13 +94,13 @@ class MainLoginScreen extends Component {
 
   //FingerPrint
   componentDidMount() {
-    this.checkDeviceForHardware();
-    this.checkForFingerprints();
+    this.checkDeviceForHardware()
+    this.checkForFingerprints()
   }
 
   checkDeviceForHardware = async () => {
-    let compatible = await LocalAuthentication.hasHardwareAsync();
-    this.setState({compatible});
+    let compatible = await LocalAuthentication.hasHardwareAsync()
+    this.setState({compatible})
   }
   
   checkForFingerprints = async () => {
@@ -108,10 +109,13 @@ class MainLoginScreen extends Component {
   }
   
   showAndroidAlert = async () => {
-    Alert.alert('Please, print your finger to login');
-    await this.scanFingerPrint();
-  };
+    Alert.alert('Please, print your finger to login')
+    await this.scanFingerPrint()
+  }
 
+  // TODO mudar forma de verificar login com google ou digital
+  // a primeira vez que entra com o google o app não mantêm sessão
+  // porque a variável na digital ainda está setada como false
   render() {
     return (
       <View style={styles.container}>
@@ -121,7 +125,7 @@ class MainLoginScreen extends Component {
           <LoginPage signIn={this.signIn} />
         )}
       </View>
-    );
+    )
   }
 }
 
@@ -134,7 +138,7 @@ const LoginPage = props => {
       <View style={styles.containerButtons}>
         <TouchableOpacity
           onPress = {() => {
-            props.signIn('google');
+            props.signIn('google')
           }}>
           <Image
             style={styles.button}
@@ -143,7 +147,7 @@ const LoginPage = props => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress = {() => {
-            props.signIn('finger');
+            props.signIn('finger')
           }}>
           <Image
             style={styles.button}
@@ -191,9 +195,9 @@ const LoginScreen = createStackNavigator({
   Login: MainLoginScreen
 }, {
   headerMode: 'none'
-});
+})
 
-const LoginContainer = createAppContainer(LoginScreen);
+const LoginContainer = createAppContainer(LoginScreen)
 
 export default class Login extends React.Component {
   render() {

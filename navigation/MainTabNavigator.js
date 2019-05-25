@@ -1,17 +1,17 @@
-import React from 'react';
-import { Platform } from 'react-native';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import React from 'react'
+import { Platform } from 'react-native'
+import { createStackNavigator, createBottomTabNavigator } from 'react-navigation'
 
-import TabBarIcon from '../components/TabBarIcon';
-import ListAll from '../screens/ListAll';
-import NewTask from '../screens/NewTask';
-import ListChecked from '../screens/ListChecked';
+import TabBarIcon from '../components/TabBarIcon'
+import ListAll from '../screens/ListAll'
+import NewTask from '../screens/NewTask'
+import ListChecked from '../screens/ListChecked'
 
 const ListAllStack = createStackNavigator({
   Home: ListAll,
 }, {
   headerMode: 'screen'
-});
+})
 
 ListAllStack.navigationOptions = {
   tabBarLabel: 'Active',
@@ -25,13 +25,13 @@ ListAllStack.navigationOptions = {
       }
     />
   ),
-};
+}
 
 const NewTaskStack = createStackNavigator({
   Links: NewTask,
 }, {
   headerMode: 'screen',
-});
+})
 
 NewTaskStack.navigationOptions = {
   tabBarLabel: 'New',
@@ -41,13 +41,13 @@ NewTaskStack.navigationOptions = {
       name={Platform.OS === 'ios' ? 'ios-add' : 'md-add'}
     />
   ),
-};
+}
 
 const ListCheckedStack = createStackNavigator({
   Settings: ListChecked,
 }, {
   headerMode: 'screen',
-});
+})
 
 ListCheckedStack.navigationOptions = {
   tabBarLabel: 'Checked',
@@ -57,11 +57,11 @@ ListCheckedStack.navigationOptions = {
       name={Platform.OS === 'ios' ? 'ios-checkmark' : 'md-checkmark'}
     />
   ),
-};
+}
 
 export default createBottomTabNavigator({
   Active: { screen: ListAllStack },
   New: { screen: NewTaskStack },
   Checked: { screen: ListCheckedStack },
-});
+})
  

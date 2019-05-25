@@ -1,6 +1,10 @@
-import React from 'react';
-import logoutIcon from "../assets/images/logout/exit-gradient-purple1.png";
-import Logout from './Logout';
+import React from 'react'
+import Config from '../settings.json'
+import moment from 'moment'
+import ip from "../services/ipAddress.json"
+
+import {  Google,
+          Constants } from 'expo'
 
 import {  Alert,
           StyleSheet,
@@ -15,18 +19,19 @@ import {  Alert,
           TimePickerAndroid,
           ScrollView,
           KeyboardAvoidingView,
-          TouchableHighlight } from 'react-native';
+          TouchableHighlight } from 'react-native'
 
 export default class NewTask extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       title: '',
       description: '',
       date: '',
       time: '',
-      importance: ''
-    };
+      importance: '',
+      ip: ip.ip
+    }
   }
 
   static navigationOptions = {
@@ -36,91 +41,137 @@ export default class NewTask extends React.Component {
       height: 35 
     },
     headerTintColor: '#FFF',
-    headerRight: (
-      <TouchableOpacity onPress={()=>
-        Alert.alert(
-          'Log out',
-          'Do you want to logout?',
-          [
-            {text: 'Cancel', onPress: () => {return null}},
-            {text: 'Confirm', onPress: () => {
-              NewTask._logout;
-            }},
-          ],
-          { cancelable: false }
-        )  
-        }>
-        <Image
-          style={{
-            width: 30,
-            height: 30,
-            margin: 10,
-            padding: 10
-          }}
-          source={logoutIcon}
-        />
-      </TouchableOpacity>
-    )
-  };
+  }
 
   _setImportance = async (type) => {
     try {
       if(type == 'high') {
         this.setState({
           importance: 'High'
-        });
+        })
       } else if (type == 'medium') {
         this.setState({
           importance: 'Medium'
-        });
+        })
       } else if (type == 'low') {
         this.setState({
           importance: 'Low'
-        });
+        })
       }
     } catch (e) {
       console.log("error", e)
     }
   }
 
-  _setText = async (text) => {
+  _saveTask = async (text) => {
     try {
-        console.log(this.state)
+      let res = await fetch(`http://${this.state.ip}:5050/api/tasks`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: this.state.title,
+          description: this.state.description,
+          date: this.state.date,
+          time: this.state.time,
+          importance: this.state.importance,
+          check: this.state.check
+        }),
+      })
+        
+      const copyTask = new Object(this.state)
 
-        let res = await fetch("http://192.168.0.10:5050/api/tasks", {
+      if(res.status !== 200) {
+        Alert.alert('Task',
+          'Please, insert valid values')
+      } else {
+        Alert.alert(
+          'Task',
+          'Do you want to insert the task into your Google calendar?',
+          [
+            {text: 'No', onPress: () => {
+              Alert.alert('Task',
+                'Your task has been saved.')
+                return null
+              }
+            },
+            {
+              text: 'Yes', onPress: async () => {
+              this._insertIntoCalendarGoogle(copyTask)
+              }
+            }
+          ],
+          {cancelable: false}
+        )  
+      }
+    } catch(err) { 
+      console.log("err", err)
+      Alert.alert('Task', 
+        'A problem ocurred, please, try again later.')
+    } finally {
+      this.setState({
+        title: '',
+        description: '',
+        date: '',
+        time: '',
+        importance: '',
+        check: false
+      })
+    }
+  }
+
+  _insertIntoCalendarGoogle = async (copyTask) => {
+    try {
+      const clientId = Config.credential_key
+      const calendarId = Config.calendar_id
+      const apiKey = Config.api_key
+      const url = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`
+      const date = moment(copyTask.date + ' ' + copyTask.time, "DD-MM-YYYY HH:mm").format()
+
+     const { type, accessToken } = await Google.logInAsync({
+        behavior: "web",
+        scopes: [ 'https://www.googleapis.com/auth/calendar',
+                  'https://www.googleapis.com/auth/calendar.events'],
+        clientId: clientId
+      })
+
+      if (type == 'success') {
+        let calendarResponse = await fetch(url, {
           method: 'POST',
-          headers: {
+          headers: { 
+            Authorization: `Bearer ${accessToken}`,
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            title: this.state.title,
-            description: this.state.description,
-            date: this.state.date,
-            time: this.state.time,
-            importance: this.state.importance,
-            check: this.state.check
-          }),
+            'summary': copyTask.title,
+            'description': copyTask.description,
+            'start': {
+              'dateTime': date,
+            },
+            'end': {
+              'dateTime': date,
+            },
+            'reminders': {
+              'useDefault': true
+            },
+          })
         })
-        if(res.status !== 200) {
-          Alert.alert('Please, insert valid values')
+        if(calendarResponse.status !== 200) {
+          Alert.alert('Google Calendar', 
+            'Did not possible to save, please try again later.')
         } else {
-          Alert.alert('Your task has been saved')
+          Alert.alert('Your task has been saved into your google calendar.')  
         }
-      } catch(err) { 
-        console.log("err", err)
-        Alert.alert('A problem ocurred, please, try again later.')
-      } finally {
-        this.setState({
-          title: '',
-          description: '',
-          date: '',
-          time: '',
-          importance: '',
-          check: false
-        })
       }
+    } catch(err) {
+      console.log("err", err)
+      Alert.alert('Google Calendar', 
+        'A problem ocurred, please, try again later.')
     }
+  }
 
   _setDateAndroid = async() => {
     try {
@@ -129,13 +180,13 @@ export default class NewTask extends React.Component {
       })
       if (date.action !== DatePickerAndroid.dismissedAction) {
         const finalDate = await `${date.day}` + "/" + 
-          `${date.month + 1}` + "/" + `${date.year}`;
+          `${date.month + 1}` + "/" + `${date.year}`
         this.setState({
           date: finalDate
-        });
+        })
       }
     } catch ({ code, message }) {
-      console.warn('Cannot open date picker', message);
+      console.warn('Cannot open date picker', message)
     }
   }
 
@@ -145,14 +196,14 @@ export default class NewTask extends React.Component {
         hour: 14,
         minute: 0,
         is24Hour: true,
-      });
+      })
       if (action !== TimePickerAndroid.dismissedAction) {
-        const m = (minute < 10) ? `0${minute}` : minute;
-        const h = (hour < 10) ? `0${hour}` : hour;
-        this.setState({ time: `${h}:${m}` });
+        const m = (minute < 10) ? `0${minute}` : minute
+        const h = (hour < 10) ? `0${hour}` : hour
+        this.setState({ time: `${h}:${m}` })
       }
     } catch ({ code, message }) {
-      console.warn('Cannot open time picker', message);
+      console.warn('Cannot open time picker', message)
     }
   }
 
@@ -204,14 +255,14 @@ export default class NewTask extends React.Component {
           <ButtonChoiceImportance _setImportance={this._setImportance} />
           <View style={styles.buttonOption}>
             <Button 
-              onPress={this._setText}
+              onPress={this._saveTask}
               title="Save"
               color="#b1b2f0"
             />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    );
+    )
   }
 }
 
@@ -244,13 +295,13 @@ const InputText = props => {
         Title
       </Text>
       <TextInput style={styles.textInput}>
-        onChangeText = {(title) => props._setText(title)}
+        onChangeText = {(title) => props._saveTask(title)}
       </TextInput>
       <Text style={styles.text}>
         Description
       </Text>
       <TextInput style={styles.textInput}>
-        onChangeText = {(text) => props._setText(text)}
+        onChangeText = {(text) => props._saveTask(text)}
       </TextInput>
     </View>
   )
@@ -289,4 +340,4 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     paddingBottom: 10
   },
-});
+})

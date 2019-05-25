@@ -1,26 +1,25 @@
-import React from 'react';
+import React from 'react'
 import {  Platform, 
           StatusBar, 
           StyleSheet, 
           View, 
           Text, 
           Image, 
-          Button  } from 'react-native';
-import { AppLoading, Asset, Font, Icon } from 'expo';
-import { createStackNavigator, createAppContainer } from 'react-navigation';
-import Login from './screens/Login';
-import AppNavigator from './navigation/AppNavigator';
-
+          Button  } from 'react-native'
+import { AppLoading, Asset, Font, Icon } from 'expo'
+import { createStackNavigator, createAppContainer } from 'react-navigation'
+import Login from './screens/Login'
+import AppNavigator from './navigation/AppNavigator'
 
 class MainScreen extends React.Component {
 
-    static navigationOptions = {
-      title: 'N O T U S',
-      headerStyle: {
-        backgroundColor: '#FFF'
-      },
-      headerTintColor: '#403e41'
-    };
+  static navigationOptions = {
+    title: 'N O T U S',
+    headerStyle: {
+      backgroundColor: '#FFF'
+    },
+    headerTintColor: '#403e41'
+  }
 
   state = {
     isLoadingComplete: false
@@ -34,14 +33,14 @@ class MainScreen extends React.Component {
           onError={this._handleLoadingError}
           onFinish={this._handleFinishLoading}
         />
-      );
+      )
     } else {
       return (
         <View style={styles.container}>
           {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
           <Login />
         </View>
-      );
+      )
     }
   }
 
@@ -51,16 +50,16 @@ class MainScreen extends React.Component {
         ...Icon.Ionicons.font,
         'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
       }),
-    ]);
-  };
+    ])
+  }
 
   _handleLoadingError = error => {
-    console.warn(error);
-  };
+    console.warn(error)
+  }
 
   _handleFinishLoading = () => {
-    this.setState({ isLoadingComplete: true });
-  };
+    this.setState({ isLoadingComplete: true })
+  }
 }
 
 const styles = StyleSheet.create({
@@ -78,12 +77,12 @@ const AppScreen = createStackNavigator({
   App: MainScreen
 }, {
   headerMode: 'screen'
-});
+})
 
-const AppContainer = createAppContainer(AppScreen);
+const AppContainer = createAppContainer(AppScreen)
 
 export default class App extends React.Component {
   render() {
-    return <AppContainer />;
+    return <AppContainer />
   }
 }

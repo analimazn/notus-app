@@ -1,6 +1,7 @@
 {
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
+    "service": "node ./services/getIPAddress.js",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -16,12 +17,10 @@
     "dotenv": "^7.0.0",
     "expo": "^32.0.6",
     "expo-google-sign-in": "^4.0.0",
-    "googleapis": "^39.2.0",
     "moment": "^2.24.0",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
-    "react-navigation": "^3.11.0",
-    "save": "^2.4.0"
+    "react-navigation": "^3.11.0"
   },
   "devDependencies": {
     "babel-preset-expo": "^5.1.1",
